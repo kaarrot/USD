@@ -36,7 +36,7 @@
 /// \addtogroup group_arch_SystemFunctions
 ///@{
 
-#if defined(ARCH_OS_LINUX)
+#if defined(ARCH_OS_LINUX) && defined(ARCH_CPU_INTEL)
 #include <x86intrin.h>
 #elif defined(ARCH_OS_DARWIN)
 #include <mach/mach_time.h>
@@ -69,6 +69,10 @@ ArchGetTickTime()
 #elif defined(ARCH_CPU_INTEL)
     // On Intel we'll use the rdtsc instruction.
     return __rdtsc();
+#elif defined(__aarch64__)
+    int64_t timer_value;
+    asm volatile("mrs %0, cntvct_el0" : "=r"(timer_value));
+    return timer_value;
 #else
 #error Unknown architecture.
 #endif

@@ -97,8 +97,8 @@ inline double ArchBitPatternToDouble(uint64_t v) {
     return value._double;
 }
 
-#else
-#error Unknown system architecture.
+// #else
+// #error Unknown system architecture.
 #endif
 
 #if defined(ARCH_OS_LINUX) || defined(doxygen)
@@ -120,8 +120,8 @@ inline void ArchSinCos(double v, double *s, double *c) {
     *c = std::cos(v);  
 }
 
-#else
-#error Unknown architecture.
+// #else
+// #error Unknown architecture.
 #endif
 
 ///@}

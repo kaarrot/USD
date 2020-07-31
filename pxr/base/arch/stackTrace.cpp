@@ -583,7 +583,7 @@ nonLockingLinux__execve (const char *file,
                          char *const argv[],
                          char *const envp[])
 {
-#if defined(ARCH_BITS_64)
+#if defined(ARCH_BITS_64) && defined(ARCH_CPU_INTEL)
     /*
      * We make a direct system call here, because we can't find an
      * execve which corresponds with the non-locking fork we call
@@ -621,8 +621,8 @@ nonLockingLinux__execve (const char *file,
     }
 
     return result;
-#else
-#error Unknown architecture
+// #else
+// #error Unknown architecture
 #endif
 }
 
