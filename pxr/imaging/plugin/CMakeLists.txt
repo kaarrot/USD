@@ -1,4 +1,5 @@
 add_subdirectory(hdStorm)
+add_subdirectory(hdEmbreeNew)
 if (${PXR_BUILD_EMBREE_PLUGIN})
     add_subdirectory(hdEmbree)
 endif()
@@ -8,3 +9,4 @@ endif()
 if (PXR_BUILD_OPENIMAGEIO_PLUGIN)
     add_subdirectory(glfOiio)
 endif()
+

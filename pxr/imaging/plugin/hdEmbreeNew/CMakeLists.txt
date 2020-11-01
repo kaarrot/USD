@@ -11,7 +11,7 @@ if (NOT ${PXR_BUILD_GPU_SUPPORT})
     return()
 endif()
 
-pxr_plugin(hdEmbree
+pxr_plugin(hdEmbreeNew
    LIBRARIES
         plug
         tf
@@ -49,7 +49,7 @@ pxr_plugin(hdEmbree
 )
 
 if (X11_FOUND OR APPLE)
-pxr_build_test(testHdEmbree
+pxr_build_test(testHdEmbreeNew
     LIBRARIES
         hdEmbree
         garch
