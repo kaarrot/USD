@@ -29,8 +29,8 @@
 #include "pxr/imaging/hd/aov.h"
 #include "pxr/imaging/hd/renderPass.h"
 #include "pxr/imaging/hd/renderThread.h"
-#include "pxr/imaging/plugin/hdEmbree/renderer.h"
-#include "pxr/imaging/plugin/hdEmbree/renderBuffer.h"
+#include "renderer.h"
+#include "renderBuffer.h"
 #include "pxr/imaging/hdx/fullscreenShader.h"
 
 #include "pxr/base/gf/matrix4d.h"

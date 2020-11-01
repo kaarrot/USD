@@ -30,7 +30,7 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 ///
-/// \class HdEmbreeRendererPlugin
+/// \class HdEmbreeRendererPluginNew
 ///
 /// A registered child of HdRendererPlugin, this is the class that gets
 /// loaded when a hydra application asks to draw with a certain renderer.
@@ -40,10 +40,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// prims (which translate scene data into drawable representations) and hydra
 /// renderpasses (which draw the scene to the framebuffer).
 ///
-class HdEmbreeRendererPlugin final : public HdRendererPlugin {
+class HdEmbreeRendererPluginNew final : public HdRendererPlugin {
 public:
-    HdEmbreeRendererPlugin() = default;
-    virtual ~HdEmbreeRendererPlugin() = default;
+    HdEmbreeRendererPluginNew() = default;
+    virtual ~HdEmbreeRendererPluginNew() = default;
 
     /// Construct a new render delegate of type HdEmbreeRenderDelegate.
     /// Embree render delegates own the embree scene object, so a new render
@@ -70,8 +70,8 @@ public:
 
 private:
     // This class does not support copying.
-    HdEmbreeRendererPlugin(const HdEmbreeRendererPlugin&)             = delete;
-    HdEmbreeRendererPlugin &operator =(const HdEmbreeRendererPlugin&) = delete;
+    HdEmbreeRendererPluginNew(const HdEmbreeRendererPluginNew&)             = delete;
+    HdEmbreeRendererPluginNew &operator =(const HdEmbreeRendererPluginNew&) = delete;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

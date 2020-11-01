@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "pxr/imaging/glf/glew.h"
-#include "pxr/imaging/plugin/hdEmbree/renderDelegate.h"
+#include "renderDelegate.h"
 
-#include "pxr/imaging/plugin/hdEmbree/config.h"
-#include "pxr/imaging/plugin/hdEmbree/instancer.h"
-#include "pxr/imaging/plugin/hdEmbree/renderParam.h"
-#include "pxr/imaging/plugin/hdEmbree/renderPass.h"
+#include "config.h"
+#include "instancer.h"
+#include "renderParam.h"
+#include "renderPass.h"
 
 #include "pxr/imaging/hd/extComputation.h"
 #include "pxr/imaging/hd/resourceRegistry.h"

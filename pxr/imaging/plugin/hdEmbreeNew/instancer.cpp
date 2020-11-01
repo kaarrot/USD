@@ -23,9 +23,9 @@
 //
 #include "pxr/imaging/glf/glew.h"
 
-#include "pxr/imaging/plugin/hdEmbree/instancer.h"
+#include "instancer.h"
 
-#include "pxr/imaging/plugin/hdEmbree/sampler.h"
+#include "sampler.h"
 #include "pxr/imaging/hd/sceneDelegate.h"
 #include "pxr/imaging/hd/tokens.h"
 

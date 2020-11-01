@@ -26,7 +26,7 @@
 
 #include "pxr/pxr.h"
 
-#include "pxr/imaging/plugin/hdEmbree/sampler.h"
+#include "sampler.h"
 
 #include "pxr/base/gf/matrix4f.h"
 #include "pxr/base/vt/array.h"

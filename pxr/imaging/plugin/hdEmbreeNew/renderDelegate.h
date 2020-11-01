@@ -27,7 +27,7 @@
 #include "pxr/pxr.h"
 #include "pxr/imaging/hd/renderDelegate.h"
 #include "pxr/imaging/hd/renderThread.h"
-#include "pxr/imaging/plugin/hdEmbree/renderer.h"
+#include "renderer.h"
 #include "pxr/base/tf/staticTokens.h"
 
 #include <mutex>

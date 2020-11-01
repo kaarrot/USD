@@ -21,40 +21,40 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "pxr/imaging/plugin/hdEmbree/rendererPlugin.h"
+#include "rendererPlugin.h"
 
 #include "pxr/imaging/hd/rendererPluginRegistry.h"
-#include "pxr/imaging/plugin/hdEmbree/renderDelegate.h"
+#include "renderDelegate.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
 // Register the embree plugin with the renderer plugin system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    HdRendererPluginRegistry::Define<HdEmbreeRendererPlugin>();
+    HdRendererPluginRegistry::Define<HdEmbreeRendererPluginNew>();
 }
 
 HdRenderDelegate*
-HdEmbreeRendererPlugin::CreateRenderDelegate()
+HdEmbreeRendererPluginNew::CreateRenderDelegate()
 {
     return new HdEmbreeRenderDelegate();
 }
 
 HdRenderDelegate*
-HdEmbreeRendererPlugin::CreateRenderDelegate(
+HdEmbreeRendererPluginNew::CreateRenderDelegate(
     HdRenderSettingsMap const& settingsMap)
 {
     return new HdEmbreeRenderDelegate(settingsMap);
 }
 
 void
-HdEmbreeRendererPlugin::DeleteRenderDelegate(HdRenderDelegate *renderDelegate)
+HdEmbreeRendererPluginNew::DeleteRenderDelegate(HdRenderDelegate *renderDelegate)
 {
     delete renderDelegate;
 }
 
 bool 
-HdEmbreeRendererPlugin::IsSupported() const
+HdEmbreeRendererPluginNew::IsSupported() const
 {
     // Nothing more to check for now, we assume if the plugin loads correctly
     // it is supported.

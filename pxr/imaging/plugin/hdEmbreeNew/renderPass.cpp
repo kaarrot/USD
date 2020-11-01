@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "pxr/imaging/hd/renderPassState.h"
-#include "pxr/imaging/plugin/hdEmbree/renderDelegate.h"
-#include "pxr/imaging/plugin/hdEmbree/renderPass.h"
+#include "renderDelegate.h"
+#include "renderPass.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
