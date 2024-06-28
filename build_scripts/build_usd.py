@@ -963,7 +963,8 @@ def InstallTBB(context, force, buildArgs):
     elif MacOS():
         InstallTBB_MacOS(context, force, buildArgs)
     else:
-        InstallTBB_Linux(context, force, buildArgs)
+        #InstallTBB_Linux(context, force, buildArgs)
+        pass
 
 def InstallTBB_Windows(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(TBB_URL, context, force, 

@@ -163,7 +163,8 @@ elseif (APPLE)
     # On Apple platforms, its idiomatic to just provide the -l linkage for sdk libs to be portable across SDK versions
     set(M_LIB "-lm")
 else()
-    find_library(M_LIB m)
+  # find_library(M_LIB m)
+  set(M_LIB "-lm")
 endif()
 
 if (NOT PXR_MALLOC_LIBRARY)
