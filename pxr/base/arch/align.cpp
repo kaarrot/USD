@@ -41,7 +41,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 void *
 ArchAlignedAlloc(size_t alignment, size_t size)
 {
-#if defined(ARCH_OS_DARWIN) || (defined(ARCH_OS_LINUX) && defined(__GLIBCXX__) && !defined(_GLIBCXX_HAVE_ALIGNED_ALLOC))
+//#if defined(ARCH_OS_DARWIN) || (defined(ARCH_OS_LINUX) && defined(__GLIBCXX__) && !defined(_GLIBCXX_HAVE_ALIGNED_ALLOC))
     // alignment must be >= sizeof(void*)
     if (alignment < sizeof(void*)) {
         alignment = sizeof(void*);
@@ -53,11 +53,11 @@ ArchAlignedAlloc(size_t alignment, size_t size)
     }
 
     return nullptr;
-#elif defined(ARCH_OS_WINDOWS)
-    return _aligned_malloc(size, alignment);
-#else
-    return aligned_alloc(alignment, size);
-#endif
+// #elif defined(ARCH_OS_WINDOWS)
+//     return _aligned_malloc(size, alignment);
+// #else
+//     return aligned_alloc(alignment, size);
+// #endif
 }
 
 /// Free memory allocated by ArchAlignedAlloc.

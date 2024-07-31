@@ -38,21 +38,24 @@ WorkDispatcher::WorkDispatcher()
     // The concurrent_wait flag used with the task_group_context ensures
     // the ref count will remain at 1 after all predecessor tasks are
     // completed, so we don't need to keep resetting it in Wait().
-    _rootTask = new(tbb::task::allocate_root(_context)) tbb::empty_task;
-    _rootTask->set_ref_count(1);
+
+    // kuba
+    // _rootTask = new(tbb::task::allocate_root(_context)) tbb::empty_task;
+    // _rootTask->set_ref_count(1);
 }
 
 WorkDispatcher::~WorkDispatcher()
 {
     Wait();
-    tbb::task::destroy(*_rootTask);
+    // tbb::task::destroy(*_rootTask);//kuba
 }
 
 void
 WorkDispatcher::Wait()
 {
     // Wait for tasks to complete.
-    _rootTask->wait_for_all();
+    // _rootTask->wait_for_all(); //kuba
+    tg.wait(); // kuba:new
 
     // If we take the flag from false -> true, we do the cleanup.
     if (_waitCleanupFlag.test_and_set() == false) {

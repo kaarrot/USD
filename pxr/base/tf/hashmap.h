@@ -261,6 +261,7 @@ private:
 
 #else
 
+// kuba why std::unordered_map (was) private - we cant use emplace
 template<class Key, class Mapped, class HashFn = std::hash<Key>,
 	 class EqualKey = std::equal_to<Key>,
          class Alloc = std::allocator<std::pair<const Key, Mapped> > >
@@ -336,6 +337,12 @@ public:
     void insert(InputIterator first, InputIterator last) {
         _Base::insert(first, last);
     }
+
+    template <class... _Args>
+    std::pair<iterator, bool> emplace(_Args&&... __args) {
+        return _Base::emplace(std::forward<_Args>(__args)...);
+    }
+    
     using _Base::key_eq;
     using _Base::load_factor;
     using _Base::max_bucket_count;

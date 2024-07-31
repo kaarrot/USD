@@ -35,6 +35,7 @@
 
 #include <tbb/concurrent_vector.h>
 #include <tbb/task.h>
+#include <oneapi/tbb/task_group.h>
 
 #include <functional>
 #include <type_traits>
@@ -103,7 +104,8 @@ public:
 
     template <class Callable>
     inline void Run(Callable &&c) {
-        _rootTask->spawn(_MakeInvokerTask(std::forward<Callable>(c)));
+        // TODO kuba
+        // _rootTask->spawn(_MakeInvokerTask(std::forward<Callable>(c)));
     }
 
     template <class Callable, class A0, class ... Args>
@@ -131,26 +133,30 @@ public:
     WORK_API void Cancel();
 
 private:
+            oneapi::tbb::task_group tg; // kuba:new2        
     typedef tbb::concurrent_vector<TfErrorTransport> _ErrorTransports;
 
     // Function invoker helper that wraps the invocation with an ErrorMark so we
     // can transmit errors that occur back to the thread that Wait() s for tasks
     // to complete.
+    // kuba TODO: no longer required to implenent tbb::task interface, instead only operator()
     template <class Fn>
-    struct _InvokerTask : public tbb::task {
+    struct _InvokerTask //: public tbb::task
+    {
         explicit _InvokerTask(Fn &&fn, _ErrorTransports *err) 
             : _fn(std::move(fn)), _errors(err) {}
 
         explicit _InvokerTask(Fn const &fn, _ErrorTransports *err) 
             : _fn(fn), _errors(err) {}
 
-        virtual tbb::task* execute() {
-            TfErrorMark m;
-            _fn();
-            if (!m.IsClean())
-                WorkDispatcher::_TransportErrors(m, _errors);
-            return NULL;
-        }
+        // TODO kuba move intr operator()
+        // virtual tbb::task* execute() {
+        //     TfErrorMark m;
+        //     _fn();
+        //     if (!m.IsClean())
+        //         WorkDispatcher::_TransportErrors(m, _errors);
+        //     return NULL;
+        // }
     private:
         Fn _fn;
         _ErrorTransports *_errors;
@@ -159,10 +165,11 @@ private:
     // Make an _InvokerTask instance, letting the function template deduce Fn.
     template <class Fn>
     _InvokerTask<typename std::remove_reference<Fn>::type>&
-    _MakeInvokerTask(Fn &&fn) { 
-        return *new( _rootTask->allocate_additional_child_of(*_rootTask) )
-            _InvokerTask<typename std::remove_reference<Fn>::type>(
-                std::forward<Fn>(fn), &_errors);
+    _MakeInvokerTask(Fn &&fn) {
+        // TODO kuba
+        // return *new( _rootTask->allocate_additional_child_of(*_rootTask) )
+        //     _InvokerTask<typename std::remove_reference<Fn>::type>(
+        //         std::forward<Fn>(fn), &_errors);
     }
 
     // Helper function that removes errors from \p m and stores them in a new
@@ -172,8 +179,23 @@ private:
 
     // Task group context and associated root task that allows us to cancel
     // tasks invoked directly by this dispatcher.
-    tbb::task_group_context _context;
-    tbb::empty_task* _rootTask;
+    // tbb::task_group_context _context;  // kuba
+    tbb::detail::d1::task_group_context _context; //kuba
+
+    // TODO kuba
+    // tbb::empty_task* _rootTask;  // empty class which inherits from tbb::task (now private) hmmm...
+    /*
+      Use in two cases - most likley to be replaced by task group
+      _rootTask->spawn(_MakeInvokerTask(std::forward<Callable>(c)));
+
+
+              return *new( _rootTask->allocate_additional_child_of(*_rootTask) )
+            _InvokerTask<typename std::remove_reference<Fn>::type>(
+                std::forward<Fn>(fn), &_errors);
+
+
+     */
+
 
     // The error transports we use to transmit errors in other threads back to
     // this thread.

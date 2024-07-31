@@ -34,7 +34,7 @@
 #include "pxr/base/tf/instantiateSingleton.h"
 #include "pxr/base/tf/stackTrace.h"
 
-#include <tbb/atomic.h>
+#include <atomic>  //kuba  use std instead
 
 using std::string;
 using std::vector;
@@ -150,9 +150,9 @@ Sdf_ChangeManager::_ProcessRemoveIfInert(_Data *data)
     TF_VERIFY(data->outermostBlock);
 }
 
-static tbb::atomic<size_t> &
+static std::atomic<size_t> &
 _InitChangeSerialNumber() {
-    static tbb::atomic<size_t> value;
+    static std::atomic<size_t> value;
     value = 1;
     return value;
 }
@@ -191,8 +191,13 @@ Sdf_ChangeManager::_SendNotices(_Data *data)
     }
 
     // Obtain a serial number for this round of change processing.
-    static tbb::atomic<size_t> &changeSerialNumber = _InitChangeSerialNumber();
-    size_t serialNumber = changeSerialNumber.fetch_and_increment();
+    static std::atomic<size_t> &changeSerialNumber = _InitChangeSerialNumber();
+    //size_t serialNumber = changeSerialNumber.fetch_and_increment(); //kuba
+
+
+    // kuba:new
+    // see https://en.cppreference.com/w/cpp/atomic/atomic_fetch_add
+    size_t serialNumber = std::atomic_fetch_add(&changeSerialNumber, 1);  //kuba:new
 
     // Send global notice.
     SdfNotice::LayersDidChange(changes, serialNumber).Send();

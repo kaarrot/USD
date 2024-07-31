@@ -46,6 +46,7 @@
 
 #include <tbb/enumerable_thread_specific.h>
 #include <algorithm>
+#include <atomic>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -128,7 +129,8 @@ private:
 
         // Number of dependencies -- prototype prims that must be resolved
         // before this prototype can be resolved.
-        tbb::atomic<size_t> numDependencies;
+
+        std::atomic<size_t> numDependencies;
 
         // List of prototype prims that depend on this prototype.
         std::vector<_PrimContext> dependentPrototypes;
@@ -172,9 +174,22 @@ private:
     void _PopulateTasksForPrototype(const _PrimContext& prototypePrim,
                                  _PrototypeTaskMap* prototypeTasks)
     {
-        std::pair<_PrototypeTaskMap::iterator, bool> prototypeTaskStatus =
-            prototypeTasks->insert(std::make_pair(
-                    prototypePrim, _PrototypeTask()));
+        // Original
+        // auto pair = std::make_pair(prototypePrim, _PrototypeTask());
+
+        // Option 1: cannot construct pair separately, cannot use make_pair for the struct which are noncopyable or nonmovable
+        // const _PrototypeTask p;
+        // const auto pair = std::make_pair(prototypePrim, p); // 
+
+        // Option 2: cannot construct pair separately (need to use piecewise construction and use tuples
+        using AtomicPair = std::pair<const _PrimContext, _PrototypeTask>;
+        // const AtomicPair  pair{std::piecewise_construct, std::forward_as_tuple(prototypePrim), std::forward_as_tuple()};
+        // std::pair<_PrototypeTaskMap::iterator, bool> prototypeTaskStatus = prototypeTasks->insert(pair);
+
+        // Option 3: map.Insert does not work with piecewise construction, need to use emplace and also implement it
+        //           as hashmap.h privately inherit from unorder_map
+        std::pair<_PrototypeTaskMap::iterator, bool> prototypeTaskStatus = prototypeTasks->emplace(std::piecewise_construct, std::forward_as_tuple(prototypePrim), std::forward_as_tuple()); // kuba emplace is private
+        
         if (!prototypeTaskStatus.second) {
             return;
         }
@@ -198,6 +213,7 @@ private:
             (*prototypeTasks)[reqPrototype].dependentPrototypes.push_back(
                 prototypePrim);
         }
+        
     }
 
     void _ExecuteTaskForPrototype(const _PrimContext& prototype,
@@ -219,8 +235,10 @@ private:
                  prototypeData.dependentPrototypes) {
             _PrototypeTask& dependentPrototypeData =
                 prototypeTasks->find(dependentPrototype)->second;
-            if (dependentPrototypeData.numDependencies
-                .fetch_and_decrement() == 1){
+
+            // if (dependentPrototypeData.numDependencies.fetch_and_decrement() == 1){
+            if (std::atomic_fetch_add(&(dependentPrototypeData.numDependencies), -1) == 1){
+                
                 dispatcher->Run(
                     &_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
                     this, dependentPrototype, prototypeTasks, xfCaches,

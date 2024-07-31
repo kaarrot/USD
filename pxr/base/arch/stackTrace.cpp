@@ -664,7 +664,7 @@ nonLockingLinux__execve (const char *file,
 static int
 nonLockingExecv(const char *path, char *const argv[])
 {
-#if defined(ARCH_OS_LINUX)
+#if defined(ARCH_OS_LINUX_KUBA)
      return nonLockingLinux__execve (path, argv, __environ);
 #else
      return execv(path, argv);

@@ -29,7 +29,9 @@
 
 #include "pxr/base/tf/envSetting.h"
 
-#include <tbb/task_scheduler_init.h>
+// #include <tbb/task_scheduler_init.h> //kuba
+#include <oneapi/tbb/global_control.h> // kuba:new
+
 #include <tbb/task_arena.h>
 
 #include <algorithm>
@@ -60,14 +62,19 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 // We create a task_scheduler_init instance at static initialization time if
 // PXR_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
-static tbb::task_scheduler_init *_tbbTaskSchedInit;
+
+//static tbb::task_scheduler_init *_tbbTaskSchedInit; //kuba
 
 unsigned
 WorkGetPhysicalConcurrencyLimit()
 {
     // Use TBB here, since it pays attention to the affinity mask on Linux and
     // Windows.
-    return tbb::task_scheduler_init::default_num_threads();
+    // return tbb::task_scheduler_init::default_num_threads();
+
+    // kuba:new
+    auto limit =  oneapi::tbb::global_control::active_value(oneapi::tbb::global_control::max_allowed_parallelism);
+    return limit;
 }
 
 // This function always returns an actual thread count >= 1.
@@ -123,7 +130,12 @@ Work_InitializeThreading()
     // previously initialized by the hosting environment (e.g. if we are running
     // as a plugin to another application.)
     if (settingVal) {
-        _tbbTaskSchedInit = new tbb::task_scheduler_init(threadLimit);
+        // _tbbTaskSchedInit = new tbb::task_scheduler_init(threadLimit);
+
+        // kuba:new
+        oneapi::tbb::global_control global_limit(oneapi::tbb::global_control::max_allowed_parallelism, threadLimit);
+
+
     }
 }
 static int _forceInitialization = (Work_InitializeThreading(), 0);
@@ -162,13 +174,18 @@ WorkSetConcurrencyLimit(unsigned n)
     // According to the documentation that should be the case, but we should
     // make sure.  If we do decide to delete it, we have to make sure to 
     // note that it has already been initialized.
-    if (_tbbTaskSchedInit) {
-        _tbbTaskSchedInit->terminate();
-        _tbbTaskSchedInit->initialize(threadLimit);
-    } else {
-        _tbbTaskSchedInit = new tbb::task_scheduler_init(threadLimit);
+
+    // kuba
+    // if (_tbbTaskSchedInit) {
+    //     _tbbTaskSchedInit->terminate();
+    //     _tbbTaskSchedInit->initialize(threadLimit);
+    // } else {
+    //     _tbbTaskSchedInit = new tbb::task_scheduler_init(threadLimit);
+    // }
+
+    // kuba:new
+    oneapi::tbb::global_control global_limit(oneapi::tbb::global_control::max_allowed_parallelism, threadLimit);
     }
-}
 
 void 
 WorkSetMaximumConcurrencyLimit()

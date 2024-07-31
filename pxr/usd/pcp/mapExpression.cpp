@@ -31,6 +31,8 @@
 
 #include <tbb/concurrent_hash_map.h>
 
+#include <atomic>
+
 PXR_NAMESPACE_OPEN_SCOPE
 
 struct Pcp_VariableImpl;
@@ -238,7 +240,9 @@ PcpMapExpression::_Node::New( _Op op_,
         // Check for existing instance to re-use
         _NodeMap::accessor accessor;
         if (_nodeRegistry->map.insert(accessor, key) ||
-            accessor->second->_refCount.fetch_and_increment() == 0) {
+            /*accessor->second->_refCount.fetch_and_increment() == 0) kuba*/
+            std::atomic_fetch_add(&(accessor->second->_refCount), 1)) /*kuba:new*/
+           {
             // Either there was no node in the table, or there was but it had
             // begun dying (another client dropped its refcount to 0).  We have
             // to create a new node in the table.  When the client that is
@@ -388,8 +392,14 @@ TfDelegatedCountIncrement(PcpMapExpression::_Node* p)
 void
 TfDelegatedCountDecrement(PcpMapExpression::_Node* p) noexcept
 {
-    if (p->_refCount.fetch_and_decrement() == 1)
+    // kuba
+    // if (p->_refCount.fetch_and_decrement() == 1)
+    //     delete p;
+
+     //kuba:new    
+    if (std::atomic_fetch_add(&(p->_refCount), -1) == 1){
         delete p;
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

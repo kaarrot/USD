@@ -45,7 +45,8 @@
 #include "pxr/usd/sdf/path.h"
 #include "pxr/usd/sdf/types.h"
 
-#include <tbb/concurrent_unordered_set.h>
+// #include <tbb/concurrent_unordered_set.h>
+#include <oneapi/tbb/concurrent_unordered_set.h>
 #include <tbb/spin_rw_mutex.h>
 
 #include <cstdint>
@@ -273,6 +274,7 @@ struct _Hasher {
         return TfHash()(val);
     }
 };
+    
 
 class CrateFile
 {
@@ -336,10 +338,11 @@ private:
         // to behave correctly.
         class _Impl {
             friend class _FileMapping;
-
+            
             // This is a foreign data source for VtArray that refers into a
             // memory-mapped region, and shares in the lifetime of the mapping.
             struct ZeroCopySource : public Vt_ArrayForeignDataSource {
+
                 explicit ZeroCopySource(_Impl *m,
                                         void const *addr,
                                         size_t numBytes);
@@ -378,7 +381,29 @@ private:
                 void const *_addr;
                 size_t _numBytes;
             };
+
             friend struct ZeroCopySource;
+
+
+            struct _HasherKuba {
+                inline size_t operator()(const ZeroCopySource &val) const {
+                    // Option 1
+                    // return TfHash()(val);
+
+                    // Option 2
+                    // similar infiite recurson as tbb_hasher() below
+                    // return TfHash::Combine(
+                    //     reinterpret_cast<uintptr_t>(val.GetAddr()),
+                    //     val.GetNumBytes()
+                    //     );
+
+                    // Option 3
+                    return tbb_hasher(val); // kuba we run into some compiler infinite recursion
+
+                }
+            };
+
+            friend struct _HasherKuba;
             
             _Impl() : _refCount(0) {};
             
@@ -421,7 +446,9 @@ private:
             ArchConstFileMapping _mapping;
             char const *_start;
             int64_t _length;
-            tbb::concurrent_unordered_set<ZeroCopySource> _outstandingRanges;
+            // kuba TODO: add MyHashCompare ???
+            // _Hasher - but that does not work either :(
+            tbb::concurrent_unordered_set<ZeroCopySource, _HasherKuba > _outstandingRanges;
         };
 
     public:
