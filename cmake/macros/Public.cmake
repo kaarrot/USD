@@ -478,7 +478,8 @@ function(pxr_build_test_shared_lib LIBRARY_NAME)
     add_library(${LIBRARY_NAME}
         SHARED
         ${bt_CPPFILES}
-    )
+        )
+    add_link_options("-Wl,-E")      
     _pxr_target_link_libraries(${LIBRARY_NAME}
         ${bt_LIBRARIES}
     )
@@ -1066,12 +1067,12 @@ function(pxr_toplevel_epilogue)
         elseif(CMAKE_COMPILER_IS_GNUCXX)
             target_link_libraries(usd_ms
                 PRIVATE
-                    -Wl,--whole-archive $<BUILD_INTERFACE:$<TARGET_FILE:usd_m>> -Wl,--no-whole-archive
+                    -Wl,-E,--whole-archive $<BUILD_INTERFACE:$<TARGET_FILE:usd_m>> -Wl,--no-whole-archive
             )
         elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
             target_link_libraries(usd_ms
                 PRIVATE
-                    -Wl,-force_load $<BUILD_INTERFACE:$<TARGET_FILE:usd_m>>
+                    -Wl,-E,-force_load $<BUILD_INTERFACE:$<TARGET_FILE:usd_m>>
             )
         endif()
 

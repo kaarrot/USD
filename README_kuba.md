@@ -13,13 +13,18 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="/data/data/com.termux/fil
 export PYTHONPATH=/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/lib/python:$PYTHONPATH
 export LD_LIBRARY_PATH=/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/lib:$LD_LIBRARY_PATH
 
+
+
 # testing
 
 cd build
 make install
 cmake -R Debug -V
 
+VERBOSE=1 make testArchAbi
 
+- without make install- testing first test
+/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/build/pxr/base/arch/testArchAbi
 
 # wrapBBoxCache python binding - 82% build
 
@@ -79,3 +84,21 @@ $ nm -gD ../tests/lib/libtestArchAbiPlugin.so
                  U __register_atfork@LIBC
 0000000000002080 T newDerived
 '''
+
+----------
+
+testArchDemangle
+
+TfEnvSetting
+
+
+testArOptionalImplementation_1
+
+
+testPlug
+
+
+testTsSplineAPI
+
+
+TfEnvSetting
