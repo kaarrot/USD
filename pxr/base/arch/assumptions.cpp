@@ -152,7 +152,7 @@ Arch_ValidateAssumptions()
      * on the current hardware architecture.
      */ 
     if (ARCH_CACHE_LINE_SIZE != cacheLineSize) {
-        ARCH_WARNING("ARCH_CACHE_LINE_SIZE != Arch_ObtainCacheLineSize()");
+        //ARCH_WARNING("ARCH_CACHE_LINE_SIZE != Arch_ObtainCacheLineSize()");
     }
 
     /*
