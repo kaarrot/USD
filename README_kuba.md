@@ -1,17 +1,19 @@
+source ~/venvs/usd_3.11/bin/activate
+
 python ./build_scripts/build_usd.py --no-usdview --no-materialx --no-imaging --generator Ninja ./install_prefix
 
 
 
 cd /data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/build/OpenUSD
 
+cmake -DCMAKE_INSTALL_PREFIX="/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix" -DCMAKE_PREFIX_PATH="/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix" -DCMAKE_BUILD_TYPE=Debug  -G "Ninja"  -DPXR_PREFER_SAFETY_OVER_SPEED=ON -DPXR_ENABLE_PYTHON_SUPPORT=ON -DPXR_USE_DEBUG_PYTHON=OFF -DPython3_EXECUTABLE="/data/data/com.termux/files/home/venvs/usd_3.11/bin/python" -DPython3_LIBRARY="/data/data/com.termux/files/usr/lib/libpython3.11.so" -DPython3_INCLUDE_DIR="/data/data/com.termux/files/usr/include/python3.11" -DBUILD_SHARED_LIBS=ON -DTBB_USE_DEBUG_BUILD=OFF -DPXR_BUILD_DOCUMENTATION=OFF -DPXR_BUILD_HTML_DOCUMENTATION=OFF -DPXR_BUILD_PYTHON_DOCUMENTATION=OFF -DPXR_BUILD_TESTS=ON -DPXR_BUILD_EXAMPLES=OFF -DPXR_BUILD_TUTORIALS=OFF -DPXR_BUILD_USD_TOOLS=OFF -DPXR_BUILD_IMAGING=OFF -DPXR_BUILD_USD_IMAGING=OFF -DPXR_BUILD_USDVIEW=OFF -DPXR_BUILD_ALEMBIC_PLUGIN=OFF -DPXR_BUILD_DRACO_PLUGIN=OFF -DPXR_ENABLE_MATERIALX_SUPPORT=OFF -DPXR_BUILD_MAYAPY_TESTS=OFF -DPXR_BUILD_ANIMX_TESTS=OFF -DBoost_NO_BOOST_CMAKE=On -DBoost_NO_SYSTEM_PATHS=True "/data/data/com.termux/files/home/SRC/OpenUSD"
 
-cmake -DCMAKE_INSTALL_PREFIX="/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix" -DCMAKE_PREFIX_PATH="/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix" -DCMAKE_BUILD_TYPE=Debug  -G "Ninja"  -DPXR_PREFER_SAFETY_OVER_SPEED=ON -DPXR_ENABLE_PYTHON_SUPPORT=ON -DPXR_USE_DEBUG_PYTHON=OFF -DPython3_EXECUTABLE="/data/data/com.termux/files/usr/bin/python" -DPython3_LIBRARY="/data/data/com.termux/files/usr/lib/libpython3.11.so" -DPython3_INCLUDE_DIR="/data/data/com.termux/files/usr/include/python3.11" -DBUILD_SHARED_LIBS=ON -DTBB_USE_DEBUG_BUILD=OFF -DPXR_BUILD_DOCUMENTATION=OFF -DPXR_BUILD_HTML_DOCUMENTATION=OFF -DPXR_BUILD_PYTHON_DOCUMENTATION=OFF -DPXR_BUILD_TESTS=ON -DPXR_BUILD_EXAMPLES=OFF -DPXR_BUILD_TUTORIALS=OFF -DPXR_BUILD_USD_TOOLS=ON -DPXR_BUILD_IMAGING=OFF -DPXR_BUILD_USD_IMAGING=OFF -DPXR_BUILD_USDVIEW=OFF -DPXR_BUILD_ALEMBIC_PLUGIN=OFF -DPXR_BUILD_DRACO_PLUGIN=OFF -DPXR_ENABLE_MATERIALX_SUPPORT=OFF -DPXR_BUILD_MAYAPY_TESTS=OFF -DPXR_BUILD_ANIMX_TESTS=OFF -DBoost_NO_BOOST_CMAKE=On -DBoost_NO_SYSTEM_PATHS=True "/data/data/com.termux/files/home/SRC/OpenUSD"
 
 ninja -j 2
 
 export PYTHONPATH=/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/lib/python:$PYTHONPATH
 
-export LD_LIBRARY_PATH=/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/lib:/data/data/com.termux/files/home/SRC/oneTBB/install_prefix/lib
 
 
 ---- Boost change 1.82.0
@@ -20,12 +22,13 @@ export LD_LIBRARY_PATH=/data/data/com.termux/files/home/SRC/OpenUSD/install_pref
 -   virtual ~instance_holder();
 +    virtual ~instance_holder() noexcept;
 
-
 /data/data/com.termux/files/home/SRC/OpenUSD/install_prefix/include/boost/python/object/value_holder.hpp
 
 struct value_holder : instance_holder
 
-+    virtual ~value_holder() noexcept {return ;}
++    virtual ~value_holder() noexcept {}
+
+
 
 # testing
 
